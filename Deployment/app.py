@@ -19,8 +19,8 @@ from PIL import Image
 # =========================
 # Path Asset
 # =========================
-LOGO_PATH = os.path.join(BASE_DIR, "logo_removebg.png")
-KAMPUS_PATH = os.path.join(BASE_DIR, "gambar_kampus.jpeg")
+LOGO_PATH = os.path.join(BASE_DIR, "img", "logo_removebg.png")
+KAMPUS_PATH = os.path.join(BASE_DIR, "img", "gambar_kampus.jpeg")
 
 # =========================
 # Page Config
