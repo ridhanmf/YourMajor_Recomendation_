@@ -6,17 +6,24 @@ import os
 
 sns.set_style('whitegrid')
 
-# Path ke model pipeline
-PIPELINE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'your_major_recomendation_pipeline.pkl')
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# 1. Dapatkan lokasi folder Deployment
+DEPLOYMENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-DATA_PATH = os.path.join(
-    BASE_DIR,
-    "data_nilai_peserta.csv"
-)
+# 2. Naik satu tingkat ke root project (YourMajor_Recomendation_...)
+ROOT_DIR = os.path.abspath(os.path.join(DEPLOYMENT_DIR, '..'))
+
+# 3. Path ke file dataset (mengacu dari root)
+DATA_PATH = os.path.join(ROOT_DIR, 'Data_set', 'data_nilai_peserta.csv')
+
+# 4. Path ke folder img & model (di dalam Deployment)
+IMG_DIR = os.path.join(DEPLOYMENT_DIR, 'img')
+PIPELINE_PATH = os.path.join(DEPLOYMENT_DIR, 'your_major_recomendation_pipeline.pkl')
 
 @st.cache_data
 def load_data():
+    # Cek apakah file benar-benar ada sebelum dibaca
+    if not os.path.exists(DATA_PATH):
+        raise FileNotFoundError(f"File tidak ditemukan di path: {DATA_PATH}")
     return pd.read_csv(DATA_PATH)
 
 
