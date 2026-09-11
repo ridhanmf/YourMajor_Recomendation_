@@ -6,24 +6,21 @@ import os
 
 sns.set_style('whitegrid')
 
-# 1. Dapatkan lokasi folder Deployment
-DEPLOYMENT_DIR = os.path.dirname(os.path.abspath(__file__))
+# 1. Base directory (folder tempat eda.py berada: Deployment/)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# 2. Naik satu tingkat ke root project (YourMajor_Recomendation_...)
-ROOT_DIR = os.path.abspath(os.path.join(DEPLOYMENT_DIR, '..'))
+# 2. Path ke model pipeline
+PIPELINE_PATH = os.path.join(BASE_DIR, 'your_major_recomendation_pipeline.pkl')
 
-# 3. Path ke file dataset (mengacu dari root)
-DATA_PATH = os.path.join(ROOT_DIR, 'Data_set', 'data_nilai_peserta.csv')
+# 3. Path ke Data_set (naik 1 tingkat dari Deployment, lalu masuk ke Data_set)
+DATA_PATH = os.path.join(BASE_DIR, '..', 'Data_set', 'data_nilai_peserta.csv')
 
-# 4. Path ke folder img & model (di dalam Deployment)
-IMG_DIR = os.path.join(DEPLOYMENT_DIR, 'img')
-PIPELINE_PATH = os.path.join(DEPLOYMENT_DIR, 'your_major_recomendation_pipeline.pkl')
+# 4. Path ke folder gambar (Deployment/img/)
+IMG_DIR = os.path.join(BASE_DIR, 'img')
+
 
 @st.cache_data
 def load_data():
-    # Cek apakah file benar-benar ada sebelum dibaca
-    if not os.path.exists(DATA_PATH):
-        raise FileNotFoundError(f"File tidak ditemukan di path: {DATA_PATH}")
     return pd.read_csv(DATA_PATH)
 
 
@@ -170,13 +167,12 @@ def run():
     nilai_cols = ['nilai_biologi', 'nilai_fisika', 'nilai_kimia', 'nilai_matematika',
                   'nilai_kmb', 'nilai_kpu', 'nilai_kua', 'nilai_ppu']
 
-
     # 1. DISTRIBUSI SISWA PER BIDANG (Kategori Jurusan)
     st.markdown('<div class="section-title">1️⃣ Distribusi Siswa per Bidang</div>', unsafe_allow_html=True)
 
     col_img, _ = st.columns([3, 1])
     with col_img:
-        st.image(os.path.join(BASE_DIR, 'kategori_jurusan.jpeg'),
+        st.image(os.path.join(IMG_DIR, 'kategori_jurusan.jpeg'),
                  caption='Kategori Jurusan — Distribusi siswa per bidang (Saintek)',
                  use_container_width=True)
 
@@ -210,13 +206,12 @@ def run():
 
     st.markdown('---')
 
-    
     # 2. RATA-RATA NILAI KESELURUHAN (AVG Nilai-Nilai)
     st.markdown('<div class="section-title">2️⃣ Rata-rata Nilai Keseluruhan (86.569 Siswa)</div>', unsafe_allow_html=True)
 
     col_img, _ = st.columns([3, 1])
     with col_img:
-        st.image(os.path.join(BASE_DIR, 'avg_nilai_nilai.jpeg'),
+        st.image(os.path.join(IMG_DIR, 'avg_nilai_nilai.jpeg'),
                  caption='AVG Nilai-Nilai — Rata-rata 8 mata uji seluruh siswa',
                  use_container_width=True)
 
@@ -257,7 +252,7 @@ def run():
 
     col_img, _ = st.columns([3, 1])
     with col_img:
-        st.image(os.path.join(BASE_DIR, 'box_plot.jpeg'),
+        st.image(os.path.join(IMG_DIR, 'box_plot.jpeg'),
                  caption='Box Plot Outlier Numeric — Sebaran nilai per mata uji',
                  use_container_width=True)
 
@@ -284,7 +279,7 @@ def run():
 
     col_img, _ = st.columns([3, 1])
     with col_img:
-        st.image(os.path.join(BASE_DIR, 'heatmap_kategori.jpeg'),
+        st.image(os.path.join(IMG_DIR, 'heatmap_kategori.jpeg'),
                  caption='AVG Nilai Pada Kategori Jurusan — Rata-rata nilai per bidang',
                  use_container_width=True)
 
@@ -311,7 +306,7 @@ def run():
 
     col_img, _ = st.columns([3, 1])
     with col_img:
-        st.image(os.path.join(BASE_DIR, 'minat_terbanyak.jpeg'),
+        st.image(os.path.join(IMG_DIR, 'minat_terbanyak.jpeg'),
                  caption='Jurusan Dengan Minat Terbanyak — Top 40 jurusan paling diminati',
                  use_container_width=True)
 
