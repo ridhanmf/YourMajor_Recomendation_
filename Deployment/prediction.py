@@ -3,18 +3,31 @@ import numpy as np
 import pandas as pd
 import joblib
 import os
-import prediction
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import NearestNeighbors
 
-# Path ke model pipeline
-PIPELINE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'your_major_recomendation_pipeline.pkl')
-ASSET_DIR = os.path.dirname(os.path.abspath(__file__))
+# 1. Dapatkan lokasi folder Deployment
+DEPLOYMENT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# 2. Naik ke root project
+ROOT_DIR = os.path.abspath(os.path.join(DEPLOYMENT_DIR, '..'))
+
+# 3. Path ke file model pkl (Mengarah ke folder Modeling)
+# Sesuaikan nama file .pkl jika di folder Modeling nama filenya 'model_your_major_recomendation_pipeline.pkl'
+PIPELINE_PATH = os.path.join(ROOT_DIR, 'Modeling', 'your_major_recomendation_pipeline.pkl')
 
 
 @st.cache_resource
 def load_model():
     """Load pipeline artefacts"""
+    if not os.path.exists(PIPELINE_PATH):
+        # Fallback jika file berada di folder Deployment
+        alt_path = os.path.join(DEPLOYMENT_DIR, 'your_major_recomendation_pipeline.pkl')
+        if os.path.exists(alt_path):
+            pipe = joblib.load(alt_path)
+            return pipe['scaler'], pipe['knn_model'], pipe['nilai_cols'], pipe['dataset_lengkap']
+        raise FileNotFoundError(f"File model tidak ditemukan di: {PIPELINE_PATH}")
+
     pipe = joblib.load(PIPELINE_PATH)
     return pipe['scaler'], pipe['knn_model'], pipe['nilai_cols'], pipe['dataset_lengkap']
 
@@ -54,10 +67,11 @@ def run():
         }
         button{
         color:black !important;
+        }
         
         </style>                   
         <div style='display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 10px;'>
-            <img src="https://raw.githubusercontent.com/ridhanmf/YourMajor_Recomendation/main/YourMajor_Recomendation/logo_remove(1).png"width='90' style='flex-shrink: 0;'>
+            <img src="https://raw.githubusercontent.com/ridhanmf/YourMajor_Recomendation/main/YourMajor_Recomendation/logo_remove(1).png" width='90' style='flex-shrink: 0;'>
             <h1 style='margin: 0;'>Prediksi & Rekomendasi Jurusan</h1>
         </div>
         
@@ -114,11 +128,10 @@ def run():
             # Distribusi kategori
             kategori_dist = neighbors['kategori_jurusan'].value_counts()
             kategori_dominan = kategori_dist.index[0]
-            kategori_pct = kategori_dist.iloc[0] / total * 100
 
             # Top kategori
             top_kategori = [(cat, round(cnt / total * 100, 1))
-                           for cat, cnt in kategori_dist.head(4).items()]
+                            for cat, cnt in kategori_dist.head(4).items()]
 
             # === TAMPILKAN HASIL ===
             nama_tampil = nama if nama.strip() else "Peserta"
